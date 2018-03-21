@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.email         = ["manish.shahi@mnsu.edu"]
 
   spec.summary       = %q{Ruby wrapper for League of legends API.}
-  spec.description   = %q{A ruby based wrapper collabs with league of legends API endpoint to get league datas.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.description   = %q{A ruby based wrapper that collabs with league of legends API endpoint to get league datas.}
+  spec.homepage      = "https://github.com/maniSHahi/ruby_gg.git"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
@@ -33,4 +33,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.16"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_dependency "httparty", "~> 0.16.1"
 end
