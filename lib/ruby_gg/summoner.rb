@@ -21,7 +21,7 @@ module RubyGg
             userPayload = HTTParty.get("#{@base_url}#{@profile_url}by-name/#{name}?api_key=#{@api_key}").parsed_response
             user = {}
             userPayload.each{|k,v| user[k.to_sym] = v}
-            return userPayload
+            return user
         end
         
         def rank_info(id)
