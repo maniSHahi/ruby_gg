@@ -16,14 +16,26 @@ module RubyGg
             @leagueVer = HTTParty.get('https://ddragon.leagueoflegends.com/api/versions.json').parsed_response[0]
         end
         
+        
         def find(name)
-            userPayload = HTTParty.get(URI.encode("#{@base_url}#{@profile_url}by-name/#{name}?api_key=#{@api_key}")).parsed_response
-            summonerInfo = {}
-            summonerInfo[:user] = get_user(userPayload['id'])
-            summonerInfo[:solo] = get_solo(userPayload['id'])
-            summonerInfo[:flex] = get_flex(userPayload['id'])
-            summonerInfo[:tt] = get_tt(userPayload['id'])
-            return summonerInfo
+            userPayload = HTTParty.get("#{@base_url}#{@profile_url}#{id.to_i}?api_key=#{@api_key}").parsed_response
+            user = {}
+            userPayload.each{|k,v| user[k.to_sym] = v}
+        end
+        
+        def rank_info(id)
+            rankPayload = HTTParty.get("#{@base_url}#{@rank_url}#{id.to_i}?api_key=#{@api_key}").parsed_response
+            rankInfo = {:solo => {}, :flex => {}, :tt => {}}
+            rankPayload.each {|x|
+                if x['queueType'].eql?"RANKED_SOLO_5x5"
+                    x.each {|k,v|rankInfo[:solo][k.to_sym] = v}
+                elsif x['queueType'].eql? "RANKED_FLEX_SR"
+                    x.each {|k,v|rankInfo[:flex][k.to_sym] = v}
+                    
+                elsif x['queueType'].eql? "RANKED_TT_SR"
+                    x.each {|k,v|rankInfo[:tt][k.to_sym] = v}
+                end }
+            return rankInfo
         end
         
         def icon(iconId)
@@ -43,12 +55,6 @@ module RubyGg
             
         end
         
-        def get_user(id)
-            userPayload = HTTParty.get("#{@base_url}#{@profile_url}#{id.to_i}?api_key=#{@api_key}").parsed_response
-            user = {}
-            userPayload.each{|k,v| user[k.to_sym] = v}
-            return user
-        end
             
         def get_solo(id)
             rankPayload = HTTParty.get("#{@base_url}#{@rank_url}#{id.to_i}?api_key=#{@api_key}").parsed_response
