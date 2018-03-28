@@ -18,7 +18,7 @@ module RubyGg
         
         
         def find(name)
-            userPayload = HTTParty.get("#{@base_url}#{@profile_url}#{id.to_i}?api_key=#{@api_key}").parsed_response
+            userPayload = HTTParty.get("#{@base_url}#{@profile_url}by-name/#{name}?api_key=#{@api_key}").parsed_response
             user = {}
             userPayload.each{|k,v| user[k.to_sym] = v}
         end
