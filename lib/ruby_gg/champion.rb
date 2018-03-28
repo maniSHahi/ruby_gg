@@ -163,6 +163,18 @@ module RubyGg
             return icon
         end
         
+        def points(points)
+            if points.to_i < 1000
+              return points
+            elsif points.to_i >= 1000 and points.to_i < 1000000
+              fixed = points.to_f/1000.0
+              return ('%.1f' % fixed).to_s + ' K'
+            elsif points.to_i >= 1000000
+              fixed = points.to_f/1000000.0
+              return ('%.1f' % fixed).to_s + ' M'
+            end
+        end
+        
     end
     
 end
