@@ -13,17 +13,22 @@ module RubyGg
             @rank_url = '/lol/league/v3/positions/by-summoner/'
             @profile_url = '/lol/summoner/v3/summoners/'
             @top_champions = '/lol/champion-mastery/v3/champion-masteries/by-summoner/'
+            @leagueVer = HTTParty.get('https://ddragon.leagueoflegends.com/api/versions.json').parsed_response[0]
         end
         
         def find(name)
             userPayload = HTTParty.get(URI.encode("#{@base_url}#{@profile_url}by-name/#{name}?api_key=#{@api_key}")).parsed_response
             summonerInfo = {}
             summonerInfo[:user] = get_user(userPayload['id'])
-            summonerInfo[:top_champions] = get_top_champions(userPayload['id'])
             summonerInfo[:solo] = get_solo(userPayload['id'])
             summonerInfo[:flex] = get_flex(userPayload['id'])
             summonerInfo[:tt] = get_tt(userPayload['id'])
             return summonerInfo
+        end
+        
+        def icon(iconId)
+            icon = "https://ddragon.leagueoflegends.com/cdn/#{@leagueVer}/img/profileicon/#{iconId.to_i}.png"
+            return icon
         end
         
         def champion_mastery(id, count = 0)
