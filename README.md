@@ -51,6 +51,17 @@ returnType = [{"playerId"=>72859900, "championId"=>53, "championLevel"=>1, "cham
     client.summoner.champion_mastery(id, 3) # returns 3 top mastery points champs.
     You can check for id from client.challenger.solo_queue()[0][:playerOrTeamId] # Gives the id for first challenger player in the list returned.
 ```
+Gets champions name with their id.
+
+```ruby
+    client.champion.get_name(championId) # Champion Id can be str or int. 
+    # You can get the championId from client.summoner.champion_mastery(id, count) ==> for count == 1 [0][championId] will return championId.
+    Example:
+    masteries = client.summoner.champion_mastery(72859900, 3) # That will return 3 top champion_mastery for that id *Rockerturner is the username*.
+    topChamp = []
+    masteries.each{|x| topChamp.push(x['championId'])} 
+    
+```
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
