@@ -10,6 +10,7 @@ module RubyGg
             @region = region
             @base_url = "https://#{@region}.api.riotgames.com"
             @champion_url = "/lol/league/v3/challengerleagues/by-queue/"
+            @leagueVer = HTTParty.get('https://ddragon.leagueoflegends.com/api/versions.json').parsed_response[0]
         end
         
         def get_name(id)
@@ -156,6 +157,12 @@ module RubyGg
                         '143' => 'Zyra'}
             return champNames[id.to_s]
         end
+        
+        def icon(champName)
+            icon = "https://ddragon.leagueoflegends.com/cdn/#{@leagueVer}/img/champion/#{champName}.png"
+            return icon
+        end
+        
     end
     
 end
