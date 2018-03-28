@@ -40,27 +40,42 @@ However you can pass in interger or string of an integer to get set number of re
 Gets summoners information (for data types check league api documentation). returnType is hashValue.
 returnType = {:user => {userDto}, :solo => {soloDto}, :flex => {flexDto}, :tt => {ttDto}}
 ```ruby
-    client.summoner.get_user(id) #Where id can be int or str. 
-    You can check for id from client.challenger.solo_queue()[0][:playerOrTeamId] # Gives the id for first challenger player in the list returned.
+    client.summoner.find(name) #Where id can be int or str. 
+    #You can check for name from client.challenger.solo_queue()[0][:playerOrTeamName] 
+    # Gives the id for first challenger player in the list returned.
 ```
 Gets summoners Champion Masteries (returns hashValue).
 returnType = [{"playerId"=>72859900, "championId"=>53, "championLevel"=>1, "championPoints"=>124, "lastPlayTime"=>1475296559000, "championPointsSinceLastLevel"=>124, "championPointsUntilNextLevel"=>1676, "chestGranted"=>false, "tokensEarned"=>0}]
 
 ```ruby
-    client.summoner.champion_mastery(id, count) # where id and count both can be str or int. Id is summoner's ID, and count is number of data you want back (it is sorted according to most mastery points).
-    client.summoner.champion_mastery(id, 3) # returns 3 top mastery points champs.
-    You can check for id from client.challenger.solo_queue()[0][:playerOrTeamId] # Gives the id for first challenger player in the list returned.
+    client.summoner.champion_mastery(id, count) 
 ```
+Where id and count both can be str or int. 
+Id is summoner's ID, and count is number of data you want back (it is sorted according to most mastery points).
+```ruby
+    client.summoner.champion_mastery(id, 3) # returns 3 top mastery points champs.
+```
+You can check for id from 
+```ruby
+    client.challenger.solo_queue()[0][:playerOrTeamId]
+```
+
+Gives the id for first challenger player in the list returned.
+    
 Gets champions name with their id.
 
 ```ruby
     client.champion.get_name(championId) # Champion Id can be str or int. 
-    # You can get the championId from client.summoner.champion_mastery(id, count) ==> for count == 1 [0][championId] will return championId.
-    Example:
-    masteries = client.summoner.champion_mastery(72859900, 3) # That will return 3 top champion_mastery for that id *Rockerturner is the username*.
+```
+You can get the championId from client.summoner.champion_mastery(id, count) ==> for count == 1 [0][championId] will return championId.
+Example:
+```ruby
+    masteries = client.summoner.champion_mastery(72859900, 3)
+```
+That will return 3 top champion_mastery for that id *Rockerturner is the username*.
+```ruby
     topChamp = []
     masteries.each{|x| topChamp.push(x['championId'])} 
-    
 ```
 ## Development
 
