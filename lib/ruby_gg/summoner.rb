@@ -1,5 +1,5 @@
 require "httparty"
-
+require 'uri'
 module RubyGg
     
     class Summoner
@@ -12,57 +12,68 @@ module RubyGg
             @base_url = "https://#{@region}.api.riotgames.com"
             @rank_url = '/lol/league/v3/positions/by-summoner/'
             @profile_url = '/lol/summoner/v3/summoners/'
+            @top_champions = '/lol/champion-mastery/v3/champion-masteries/by-summoner/'
         end
         
-        def get_profile(id)
-            summoner_info = {}
-            summoner_info[:user] = get_user(id)
-            summoner_info[:solo] = get_solo(id)
-            summoner_info[:flex] = get_flex(id)
-            summoner_info[:tt] = get_tt(id)
-            return summoner_info
+        def find(name)
+            userPayload = HTTParty.get(URI.encode("#{@base_url}#{@profile_url}by-name/#{name}?api_key=#{@api_key}")).parsed_response
+            summonerInfo = {}
+            summonerInfo[:user] = get_user(userPayload['id'])
+            summonerInfo[:top_champions] = get_top_champions(userPayload['id'])
+            summonerInfo[:solo] = get_solo(userPayload['id'])
+            summonerInfo[:flex] = get_flex(userPayload['id'])
+            summonerInfo[:tt] = get_tt(userPayload['id'])
+            return summonerInfo
         end
         
-        private
+        def champion_mastery(id, count = 0)
+            mastery = HTTParty.get("#{@base_url}#{@top_champions}#{id.to_i}?api_key=#{@api_key}").parsed_response
+            topChamps = []
+            if not count.to_i <= 0 or mastery.size == count.to_i
+                (0...count.to_i).each {|x| topChamps.push(mastery[x])}
+                return topChamps
+            else
+                return mastery
+            end
+            
+        end
+        
         def get_user(id)
-            user_payload = HTTParty.get("#{@base_url}#{@profile_url}#{id.to_i}?api_key=#{@api_key}").parsed_response
+            userPayload = HTTParty.get("#{@base_url}#{@profile_url}#{id.to_i}?api_key=#{@api_key}").parsed_response
             user = {}
-            user_payload.each{|k,v| user[k.to_sym] = v}
+            userPayload.each{|k,v| user[k.to_sym] = v}
             return user
         end
             
-        private
         def get_solo(id)
-            rank_payload = HTTParty.get("#{@base_url}#{@rank_url}#{id.to_i}?api_key=#{@api_key}").parsed_response
+            rankPayload = HTTParty.get("#{@base_url}#{@rank_url}#{id.to_i}?api_key=#{@api_key}").parsed_response
             solo = {}
             @solo = nil
-            rank_payload.each{|x| @solo = rank_payload.index(x) if x['queueType'].eql?'RANKED_SOLO_5x5'}
+            rankPayload.each{|x| @solo = rankPayload.index(x) if x['queueType'].eql?'RANKED_SOLO_5x5'}
             if not @solo.nil?
-                (rank_payload[@solo]).each {|k,v| solo[k.to_sym] = v if not "queueType".eql?k or "playerOrTeamName".eql?k or "playerOrTeamId".eql?k}
+                (rankPayload[@solo]).each {|k,v| solo[k.to_sym] = v if not "queueType".eql?k or "playerOrTeamName".eql?k or "playerOrTeamId".eql?k}
             end
             return solo
         end
         
-        private
         def get_flex(id)
             rank_payload = HTTParty.get("#{@base_url}#{@rank_url}#{id.to_i}?api_key=#{@api_key}").parsed_response
             flex = {}
             @flex = nil
-            rank_payload.each{|x| @solo = rank_payload.index(x) if x['queueType'].eql?'RANKED_FLEX_SR'}
+            rank_payload.each{|x| @flex = rank_payload.index(x) if x['queueType'].eql?'RANKED_FLEX_SR'}
             if not @flex.nil?
                 (rank_payload[@flex]).each {|k,v| flex[k.to_sym] = v if not "queueType".eql?k or "playerOrTeamName".eql?k or "playerOrTeamId".eql?k}
             end
             return flex
         end
         
-        private
         def get_tt(id)
-            rank_payload = HTTParty.get("#{@base_url}#{@rank_url}#{id.to_i}?api_key=#{@api_key}").parsed_response
+            rankPayload = HTTParty.get("#{@base_url}#{@rank_url}#{id.to_i}?api_key=#{@api_key}").parsed_response
             tt = {}
             @tt = nil
-            rank_payload.each{|x| @tt = rank_payload.index(x) if x['queueType'].eql?'RANKED_TT_SR'}
+            rankPayload.each{|x| @tt = rankPayload.index(x) if x['queueType'].eql?'RANKED_TT_SR'}
             if not @tt.nil?
-                (rank_payload[@tt]).each {|k,v| tt[k.to_sym] = v if not "queueType".eql?k or "playerOrTeamName".eql?k or "playerOrTeamId".eql?k}
+                (rankPayload[@tt]).each {|k,v| tt[k.to_sym] = v if not "queueType".eql?k or "playerOrTeamName".eql?k or "playerOrTeamId".eql?k}
             end
             return tt
         end

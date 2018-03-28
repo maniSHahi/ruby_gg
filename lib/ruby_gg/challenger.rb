@@ -13,16 +13,16 @@ module RubyGg
         end
         
         def solo_queue (size = 0) # Not passing an argument / passing string (unless string is number)/ 0 => returns all 200 results.
+            payCheck = (HTTParty.get("#{@base_url}#{@challenger_url}RANKED_SOLO_5x5?api_key=#{@api_key}").parsed_response)['entries']
             if size.to_i == 0 || size.to_i >200
-                size = paycheck.size
+                size = payCheck.size
             else
                 size = size.to_i
             end
-            paycheck = (HTTParty.get("#{@base_url}#{@challenger_url}RANKED_SOLO_5x5?api_key=#{@api_key}").parsed_response)['entries']
-            payload = []
-            paycheck.sort!{|x, y| y['leaguePoints'] <=> x['leaguePoints']}
-            (0...size).each {|x| payload.push(player_dto(paycheck[x]))}
-            return payload
+            payLoad = []
+            payCheck.sort!{|x, y| y['leaguePoints'] <=> x['leaguePoints']}
+            (0...size).each {|x| payLoad.push(player_dto(payCheck[x]))}
+            return payLoad
         end
         
         private
