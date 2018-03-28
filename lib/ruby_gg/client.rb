@@ -1,5 +1,6 @@
 require_relative('challenger')
 require_relative('summoner')
+require_relative('champion')
 module RubyGg
     
     class Client
@@ -32,6 +33,9 @@ module RubyGg
             @summoner = Summoner.new(@api_key, @region)
         end
     
+        def champion
+            @champion = Champion.new(@api_key, @region)
+        end
     end
 
 end
